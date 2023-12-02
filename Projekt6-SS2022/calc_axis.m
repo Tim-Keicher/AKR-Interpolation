@@ -1,4 +1,4 @@
- function [p_J2,p_J_TCP,winkel]=calc_axis(l1,l2,p_TCP)
+function [p_J2,p_J_TCP,winkel]=calc_axis(l1,l2,p_TCP)
 
 p_J2=zeros(size(p_TCP,1),3); % 0er Array in größe P_TCP,3
 p_J_TCP=zeros(size(p_TCP,1),3); % 0er Array in größe P_TCP,3

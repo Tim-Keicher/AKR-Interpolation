@@ -38,7 +38,7 @@ glg_s=int(glg_v,t)+p_start;%Gleichungen Strecke
 %Schrittweise in Abhängigkeit von te, Koordinaten von x und y zum Zeitpunkt t werden in Matrix p erfasst 
 % --> egal ob strecke lang oder kurz, Abstände sind näherungsweise immer gleich Lang
 te=sum(te,'all'); % Umwandlung von Matrix in einfache Zahl 
-NumPoints=round(te); 
+NumPoints=(round(te)); 
 p=zeros(NumPoints,2);   %  Array mit nur Nullen drin
 v=zeros(NumPoints,2);
 a=zeros(NumPoints,2);
