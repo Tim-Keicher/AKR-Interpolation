@@ -29,21 +29,23 @@
 %   am = [1, 1];
 %   t_start = 0;
 %   [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, Zeit] = calc_p_linear(p_start, p_end, vm, am, t_start);
-
-function [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, Zeit] = calc_p_linear(p_start, p_end, vm, am, t_start)
+%[p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, Zeit] = calc_p_linear(am, t_start, ta, tv, te, p_start, p_ende)
+function [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
     syms t real
+    % 
     dir = sign(p_end - p_start); % direction -> Bewegungsrichtung wird bestimmt
 
-    % Berechnung der jeweiligen Streckenlängen in x und y Richtung
-    if (p_end(2, 1) - p_start(2, 1)) == 0 % Unterscheidung zwischen Achsbewegungsrichtung
-        s_ep = [sqrt((p_end(1, 1) - p_start(1, 1))^2 + (p_end(2, 1) - p_start(2, 1))^2); 0]; % x-Richtung
-    else
-        s_ep = [0; sqrt((p_end(1, 1) - p_start(1, 1))^2 + (p_end(2, 1) - p_start(2, 1))^2)]; % y-Richtung
-    end
+%     % Berechnung der jeweiligen Streckenlängen in x und y Richtung
+%     if (p_end(2, 1) - p_start(2, 1)) == 0 % Unterscheidung zwischen Achsbewegungsrichtung
+%         s_ep = [sqrt((p_end(1, 1) - p_start(1, 1))^2 + (p_end(2, 1) - p_start(2, 1))^2); 0]; % x-Richtung
+%     else
+%         s_ep = [0; sqrt((p_end(1, 1) - p_start(1, 1))^2 + (p_end(2, 1) - p_start(2, 1))^2)]; % y-Richtung
+%     end
+% 
+%     % Berechnung der Zeiten für a, v, te mit der calc_t_ramp funktion bekannt aus Übungsaufgabe
+%     [ta, tv, te] = calc_t_ramp(s_ep, vm, am); % Funktion berechnet aus vm, bm und se die Zeiten tb, tv und te
 
-    % Berechnung der Zeiten für a, v, te mit der calc_t_ramp funktion bekannt aus Übungsaufgabe
-    [ta, tv, te] = calc_t_ramp(s_ep, vm, am); % Funktion berechnet aus vm, bm und se die Zeiten tb, tv und te
-
+  
     % Berechnen von Pulsfunktionen "ein oder aus" zum jeweiligen Zeitpunkt für Beschleunigung, konstante Geschwindigkeit und Verzögerung (Heaviside-Funktion)
     % Durchlauf für beide Gelenkbeschleunigungen (J1 und J2) - oberen 3 nur für plot
     for i = 1:size(am)
@@ -73,7 +75,7 @@ function [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, Zeit] = c
     p = zeros(NumPoints, 2);    % Array mit nur Nullen drin
     v = zeros(NumPoints, 2);
     a = zeros(NumPoints, 2);
-    Zeit = zeros(NumPoints, 1);
+    zeit = zeros(NumPoints, 1);
     for i = 1:NumPoints         % Positionsbestimmung des TCP  - Alle Werte in eine Positions Matrix,Geschwindigkeitsmatrix und Beschleunigungsmatrix geschrieben
         tm = (te / (NumPoints - 1)) * (i - 1);
         tmp = subs(glg_s, t, tm);
@@ -85,6 +87,6 @@ function [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, Zeit] = c
         v(i, 2) = tmp_v(2);
         a(i, 1) = tmp_a(1);
         a(i, 2) = tmp_a(2);
-        Zeit(i) = tm + t_start;
+        zeit(i) = tm + t_start;
     end
 end
