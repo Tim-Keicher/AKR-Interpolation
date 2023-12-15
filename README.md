@@ -17,4 +17,4 @@ Projekt 6: Interpolation von Linearbahnen mit RR-Kinematik
 - Darstellung der Gelenkwinkelverläufe und deren Ableitungen über der Zeit
 - Optional: Positionsüberschleifen der Eckpunkte
 
-![grafik](https://github.com/Tim-Keicher/AKR-Interpolation/assets/61784648/43df6188-9af8-4021-a3be-c4a94ad7a1d6)
+![image](https://github.com/Tim-Keicher/AKR-Interpolation/assets/61784648/7cec36b9-b417-491b-9cfa-001b8444e952)
