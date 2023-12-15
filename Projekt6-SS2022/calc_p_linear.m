@@ -5,9 +5,11 @@
 % Eingabe:
 %   p_start - Startposition im kartesischen Raum
 %   p_end - Endposition im kartesischen Raum
-%   vm - Geschwindigkeit für jede Achse
 %   am - Beschleunigung für jede Achse
 %   t_start - Startzeitpunkt
+%   ta - Endzeitpunkt Beschleunigungsfahrt
+%   tv - Endzeitpunkt Geschwindigkeitsfahrt
+%   te - Endzeitpunkt
 %
 % Ausgabe:
 %   p - Matrix der Positionen des TCP für jeden Zeitschritt
@@ -20,7 +22,7 @@
 %   glg_a_p - Symbolische Gleichung für die Beschleunigung (Für Plot)
 %   glg_v_p - Symbolische Gleichung für die Geschwindigkeit (Für Plot)
 %   glg_s_p - Symbolische Gleichung für die Strecke (Für Plot)
-%   Zeit - Zeitpunkte für jeden Zeitschritt
+%   zeit - Zeitpunkte für jeden Zeitschritt
 %
 % Beispiel:
 %   p_start = [0, 0];
@@ -28,11 +30,10 @@
 %   vm = [2, 2];
 %   am = [1, 1];
 %   t_start = 0;
-%   [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, Zeit] = calc_p_linear(p_start, p_end, vm, am, t_start);
-%[p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, Zeit] = calc_p_linear(am, t_start, ta, tv, te, p_start, p_ende)
+%   [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
 function [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
     syms t real
-    % 
+     
     dir = sign(p_end - p_start); % direction -> Bewegungsrichtung wird bestimmt  
     
     % Berechnen von Pulsfunktionen "ein oder aus" zum jeweiligen Zeitpunkt für Beschleunigung, konstante Geschwindigkeit und Verzögerung (Heaviside-Funktion)
