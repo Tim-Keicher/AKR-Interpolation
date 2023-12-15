@@ -33,19 +33,8 @@
 function [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
     syms t real
     % 
-    dir = sign(p_end - p_start); % direction -> Bewegungsrichtung wird bestimmt
-
-%     % Berechnung der jeweiligen Streckenlängen in x und y Richtung
-%     if (p_end(2, 1) - p_start(2, 1)) == 0 % Unterscheidung zwischen Achsbewegungsrichtung
-%         s_ep = [sqrt((p_end(1, 1) - p_start(1, 1))^2 + (p_end(2, 1) - p_start(2, 1))^2); 0]; % x-Richtung
-%     else
-%         s_ep = [0; sqrt((p_end(1, 1) - p_start(1, 1))^2 + (p_end(2, 1) - p_start(2, 1))^2)]; % y-Richtung
-%     end
-% 
-%     % Berechnung der Zeiten für a, v, te mit der calc_t_ramp funktion bekannt aus Übungsaufgabe
-%     [ta, tv, te] = calc_t_ramp(s_ep, vm, am); % Funktion berechnet aus vm, bm und se die Zeiten tb, tv und te
-
-  
+    dir = sign(p_end - p_start); % direction -> Bewegungsrichtung wird bestimmt  
+    
     % Berechnen von Pulsfunktionen "ein oder aus" zum jeweiligen Zeitpunkt für Beschleunigung, konstante Geschwindigkeit und Verzögerung (Heaviside-Funktion)
     % Durchlauf für beide Gelenkbeschleunigungen (J1 und J2) - oberen 3 nur für plot
     for i = 1:size(am)
