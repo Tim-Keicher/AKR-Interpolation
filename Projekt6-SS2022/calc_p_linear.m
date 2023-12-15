@@ -18,7 +18,6 @@
 %   glg_a - Symbolische Gleichung für die Beschleunigung
 %   glg_v - Symbolische Gleichung für die Geschwindigkeit
 %   glg_s - Symbolische Gleichung für die Strecke
-%   te - Endzeitpunkt
 %   glg_a_p - Symbolische Gleichung für die Beschleunigung (Für Plot)
 %   glg_v_p - Symbolische Gleichung für die Geschwindigkeit (Für Plot)
 %   glg_s_p - Symbolische Gleichung für die Strecke (Für Plot)
@@ -30,8 +29,8 @@
 %   vm = [2, 2];
 %   am = [1, 1];
 %   t_start = 0;
-%   [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
-function [p, v, a, glg_a, glg_v, glg_s, te, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
+%   [p, v, a, glg_a, glg_v, glg_s, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
+function [p, v, a, glg_a, glg_v, glg_s, glg_a_p, glg_v_p, glg_s_p, zeit] = calc_p_linear(p_start, p_end, am, t_start, ta, tv, te)
     syms t real
      
     dir = sign(p_end - p_start); % direction -> Bewegungsrichtung wird bestimmt  
