@@ -32,58 +32,34 @@ function [ta, tv, te] = calc_t_ramp_target_time(t_target, s_e, v_max, a_max)
     end
 
     % Berechnung der Zeitintervalle für jedes Bahnsegment
-    t_e = t_target*(s_e/sum(s_e));
+    t_e = t_target * (s_e / sum(s_e));
     t_e(2,:) = t_e(1,:);
     
-    % t_a = t_e./4;   % definiert (manuel)
-
+    % Parameter der Mitternachtsformel bestimmen
     a = -1 / a_max(1);
     b = t_e(1,:);
     c = -s_e;
 
+    % Berechnung der Geschwindigkeiten in Bezug auf die Beschleunigungen
     v1 = zeros(1, length(s_e));
     v2 = zeros(1, length(s_e));
     for i = 1:length(s_e)
-        D = b(i)^2 - 4 * a * c(i)
+        D = b(i)^2 - 4 * a * c(i);
         if D < 0
             error("Weg kann nicht gefahren werden, neg. Wurzel! Maximale Beschleunigung zu gering")
         end
     
+        % Loesen der quadratischen Gleichung
         v1(i) = (-b(i) + sqrt(D)) / (2 * a);
         v2(i) = (-b(i) - sqrt(D)) / (2 * a);
+
+        if v1(i) > v_max(1)
+            error("Die maximale Geschwindigkeit ist zu gering!")
+        end
     end
 
+    % Rückgabewerte
     te = t_e(1,:);
     ta = v1 ./ a_max(1);
     tv = v2 ./ a_max(1);
-
-    % Berechnung der maximalen Geschwindigkeit abh. der maximalen Beschleunigung
-    % v_max_calc = sqrt(s_e.*a_max);
-    % v_max_calc_t = s_e.*(t_e - t_a);
-    
-    % Bestimmung der Maximalgeschwindigkeiten durch Auswahl das kleinsten
-    % Wertes aus der Berechnung und Angabe
-    % vm = zeros(2,numel(s_e));
-    % for i = 1:numel(v_max_calc_a(1,:))
-    %     vm(1,i) = min([v_max_calc_a(1,i) v_max_calc_t(1,i) v_max(1)]);
-    %     if numel(s_e) > 1
-    %         vm(2,i) = min([v_max_calc_a(2,i) v_max_calc_t(2,i) v_max(2)]);
-    %     end
-    % end
-    
-    % Berechnung der Zeitenabschnitte
-    % t_a = vm ./ a_max;
-    % t_v = t_e - t_a;
-    % 
-    % % Prueft, ob die Bahn mit den Angegebenen Parametern gefahren werden kann
-    % for i = 1:numel(s_e)
-    %     if t_v(i) < t_a(i)
-    %         % Error erscheint und Programm wird abgebrochen
-    %         error("Mit den agegebenen Parametern kann der Weg nicht gefahren werden")
-    %     end
-    % end
-
-    % te = t_e(1,:);
-    % tv = t_v(1,:);
-    % ta = t_a(1,:);
 end
