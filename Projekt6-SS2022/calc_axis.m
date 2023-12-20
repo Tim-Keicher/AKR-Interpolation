@@ -6,6 +6,9 @@
 %   l1 - Länge des ersten Gelenkarms
 %   l2 - Länge des zweiten Gelenkarms
 %   p_TCP - Position des TCP (Werkzeugzentrum) im kartesischen Raum
+%   rr_config_flag - Roboter Konfigurations Flag. 
+%                    0: Standart
+%                    1: Umgekehrte Konfiguration
 %
 % Ausgabe:
 %   p_J2 - Position des zweiten Gelenks im kartesischen Raum
@@ -15,10 +18,11 @@
 % Beispiel:
 %   l1 = 2;
 %   l2 = 1;
+%   konfig_flag = 0;
 %   p_TCP = [2, 2, 0];
-%   [p_J2, p_J_TCP, winkel] = calc_axis(l1, l2, p_TCP);
+%   [p_J2, p_J_TCP, winkel] = calc_axis(l1, l2, p_TCP, konfig_flag);
 
-function [p_J2, p_J_TCP, winkel] = calc_axis(l1, l2, p_TCP)
+function [p_J2, p_J_TCP, winkel] = calc_axis(l1, l2, p_TCP, konfig_flag)
     p_J2 = zeros(size(p_TCP, 1), 3);    % 0er Array in Größe P_TCP,3
     p_J_TCP = zeros(size(p_TCP, 1), 3); % 0er Array in Größe P_TCP,3
     winkel = zeros(size(p_TCP, 1), 2);  % 0er Array in Größe P_TCP,2
@@ -39,8 +43,14 @@ function [p_J2, p_J_TCP, winkel] = calc_axis(l1, l2, p_TCP)
         % Beta und chi berechnen
         beta = acos(((l1^2 + p^2 - l2^2) / (2 * l1 * p)));
         chi = acos(((l1^2 + l2^2 - p^2) / (2 * l1 * l2)));
-        winkel(i, 1) = (alpha - beta);
-        winkel(i, 2) = (pi - chi);
+        
+        if konfig_flag == 0
+            winkel(i, 1) = (alpha - beta);
+            winkel(i, 2) = (pi - chi);
+        else
+            winkel(i, 1) = (alpha + beta);
+            winkel(i, 2) = (pi + chi);
+        end
 
         % Rotationsmatrix Aufstellen von K1 zu K0
         R_K1_2_K0 = [cos(winkel(i, 1)), -sin(winkel(i, 1)), 0;
