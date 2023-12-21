@@ -112,6 +112,11 @@ function test(app, konfig)
     grid(app, 'on')
 
     rr_robot = animatedline(app, 'Marker', 'o','Color', 'b'); % Roboter Plot mit ersten Werten erstellen
+    % q1 = animatedline(app);
+    q1 = quiver(app, p_gesamt(1, 1), p_gesamt(1, 2), v_gesamt(1, 1), v_gesamt(1, 2), 'linewidth', 2, 'color', 'g');	% Geschwindigkeitsvektor erstellen
+    set(q1, 'AutoScale', 'on', 'AutoScaleFactor', 5, 'MaxHeadSize', 5);
+    q2 = quiver(app, p_gesamt(1, 1), p_gesamt(1, 2), a_gesamt(1, 1), a_gesamt(1, 2), 'linewidth', 2, 'color', 'r');  % Bescghleunigungsvektor erstellen
+    set(q2, 'AutoScale', 'on', 'AutoScaleFactor', 25, 'MaxHeadSize', 5);
 
     tic
     steps = size(p_gesamt, 1);
@@ -119,6 +124,10 @@ function test(app, konfig)
         clearpoints(rr_robot);  % löscht die Zeichnung der SChleife 1-1
         addpoints(rr_robot, [0, p_J1(i, 1)], [0, p_J1(i, 2)]);                      % Armteil 1
         addpoints(rr_robot, [p_J1(i, 1), p_J2(i, 1)], [p_J1(i, 2), p_J2(i, 2)]);    % Armteil 2
+        
+        set(q1, 'xdata', p_gesamt(i, 1), 'ydata', p_gesamt(i, 2), 'udata', v_gesamt(i, 1), 'vdata', v_gesamt(i, 2))
+        set(q2, 'xdata', p_gesamt(i, 1), 'ydata', p_gesamt(i, 2), 'udata', a_gesamt(i, 1), 'vdata', a_gesamt(i, 2))
+
         drawnow();
     end
     elapsed_time = toc;
