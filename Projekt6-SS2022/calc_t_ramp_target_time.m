@@ -22,12 +22,14 @@
 %   a_max = [1 1];
 %   [ta, tv, te] = calc_t_ramp_target_time(t_target, s_e, v_max, a_max);
 
-function [ta, tv, te] = calc_t_ramp_target_time(t_target, s_e, v_max, a_max)
+function [ta, tv, te, err] = calc_t_ramp_target_time(t_target, s_e, v_max, a_max)
+    err = '';
+
     % Gibt error Nachricht zurück, falls eine Strecke negativen ist
     for i = 1:numel(s_e)
         if s_e(i) < 0
-            error("Bei der Zeitberechnung wurden negative Strecken übergeben, sie " + ...
-                "müssen jedoch immer positive sein.")
+            err = "Bei der Zeitberechnung wurden negative Strecken übergeben, sie " + ...
+                "müssen jedoch immer positive sein.";
         end
     end
 
@@ -46,7 +48,7 @@ function [ta, tv, te] = calc_t_ramp_target_time(t_target, s_e, v_max, a_max)
     for i = 1:length(s_e)
         D = b(i)^2 - 4 * a * c(i);
         if D < 0
-            error("Weg kann nicht gefahren werden, neg. Wurzel! Maximale Beschleunigung zu gering")
+            err = "Weg kann nicht gefahren werden, neg. Wurzel!";
         end
     
         % Loesen der quadratischen Gleichung
@@ -54,7 +56,7 @@ function [ta, tv, te] = calc_t_ramp_target_time(t_target, s_e, v_max, a_max)
         v2(i) = (-b(i) - sqrt(D)) / (2 * a);
 
         if v1(i) > v_max(1)
-            error("Die maximale Geschwindigkeit ist zu gering!")
+            err = "Die maximale Geschwindigkeit ist zu gering!";
         end
     end
 
