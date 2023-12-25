@@ -70,8 +70,24 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
             s_e(i-1) = sqrt((p_punkte(1,i)-p_punkte(1,i-1))^2 + (p_punkte(2,i)-p_punkte(2,i-1))^2);
         end
     
-        [ta_temp, tv_temp, te_temp] = calc_t_ramp_target_time(t_target, s_e, vm, am);
+        [ta_temp, tv_temp, te_temp, err] = calc_t_ramp_target_time(t_target, s_e, vm, am);
     
+        % Auf Fehler pruefen
+        if ~isempty(err)
+            app.SystemStateLamp.Color = [0.90,0.90,0.90];   % Systemlampe zuruecksetzten
+            
+            % Setzten der entsprechnenden Signallampe
+            app.ParamLamp.Color = [1, 0, 0];
+            drawnow()
+
+            warning(err)    % Warning für den Fehler in der Konsole ausgeben
+
+            return;
+        else    % Zuruecksetzten der Signallampen der Fehler, falls Fehlerstatus von vorheriger Runde vorhanden. 
+            app.ParamLamp.Color = [0.90,0.90,0.90];
+            disp('no error')
+        end
+
         % Initialisierung der Variablen
         ta = zeros(length(p_punkte)-1, 2);
         tv = zeros(length(p_punkte)-1, 2);
@@ -112,82 +128,91 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
 
     % Erstellung der Roboter Animation + Rechteck
     cla(ax1)    % Plot loeschen, falls noch aus vorherigen durchläufen vorhanden
-    hold(ax1, 'on');
-    plot(ax1, p_punkte(1, :), p_punkte(2, :), 'k-'); % Rechteck zeichnen
-    rr_robot = animatedline(ax1, 'Marker', 'o','Color', 'b'); % Roboter Plot mit ersten Werten erstellen
-
-    q1 = quiver(ax1, p_gesamt(1, 1), p_gesamt(1, 2), v_gesamt(1, 1), v_gesamt(1, 2), 'linewidth', 2, 'color', 'g');	% Geschwindigkeitsvektor erstellen
-    set(q1, 'AutoScale', 'on', 'AutoScaleFactor', 5, 'MaxHeadSize', 5);
-    q2 = quiver(ax1, p_gesamt(1, 1), p_gesamt(1, 2), a_gesamt(1, 1), a_gesamt(1, 2), 'linewidth', 2, 'color', 'r');  % Bescghleunigungsvektor erstellen
-    set(q2, 'AutoScale', 'on', 'AutoScaleFactor', 25, 'MaxHeadSize', 5);
+    if app.BewegungssimulationCheckBox.Value
+        hold(ax1, 'on');
+        plot(ax1, p_punkte(1, :), p_punkte(2, :), 'k-'); % Rechteck zeichnen
+        rr_robot = animatedline(ax1, 'Marker', 'o','Color', 'b'); % Roboter Plot mit ersten Werten erstellen
     
-    % if konfig == 0
-    %     legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southwest')
-    % else
-    %     legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southeast')
-    % end
-    axis(ax1, [-100 100 -30 70]);
-    hold(ax1, 'off');
+        q1 = quiver(ax1, p_gesamt(1, 1), p_gesamt(1, 2), v_gesamt(1, 1), v_gesamt(1, 2), 'linewidth', 2, 'color', 'g');	% Geschwindigkeitsvektor erstellen
+        set(q1, 'AutoScale', 'on', 'AutoScaleFactor', 5, 'MaxHeadSize', 5);
+        q2 = quiver(ax1, p_gesamt(1, 1), p_gesamt(1, 2), a_gesamt(1, 1), a_gesamt(1, 2), 'linewidth', 2, 'color', 'r');  % Bescghleunigungsvektor erstellen
+        set(q2, 'AutoScale', 'on', 'AutoScaleFactor', 25, 'MaxHeadSize', 5);
+        
+        % if konfig == 0
+        %     legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southwest')
+        % else
+        %     legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southeast')
+        % end
+        axis(ax1, [-100 100 -30 70]);
+        hold(ax1, 'off');
+    end
 
 
     % Erstellung des Winkelverlaufs
     cla(ax2)    % Plot loeschen, falls noch aus vorherigen durchläufen vorhanden
-    hold(ax2, 'on');
-    winkel_deg = winkel .* (180)/pi;
-    plot(ax2, zeit(:), winkel_deg(:, 1), 'r-'); % Winkelverlauf Gelenk J1 Zeichnen
-    plot(ax2, zeit(:), winkel_deg(:, 2), 'b-'); % Winkelverlauf Gelenk J2 Zeichnen
-
-    angle_J1 = animatedline(ax2, 'Marker', 'o','Color', 'r'); % Zeichnen der aktuellen Position von Gelenk J1
-    angle_J2 = animatedline(ax2, 'Marker', 'o','Color', 'b'); % Zeichnen der aktuellen Position von Gelenk J2
+    if app.WinkelVerlaufCheckBox.Value
+        hold(ax2, 'on');
+        winkel_deg = winkel .* (180)/pi;
+        plot(ax2, zeit(:), winkel_deg(:, 1), 'r-'); % Winkelverlauf Gelenk J1 Zeichnen
+        plot(ax2, zeit(:), winkel_deg(:, 2), 'b-'); % Winkelverlauf Gelenk J2 Zeichnen
     
-    % axis(ax2, [0 max(round(te_gesamt))...
-    %           floor(rad2deg(min(winkel(:)))/10)*10-20 ...
-    %           ceil(rad2deg(max(winkel(:)))/10)*10]+20);  % something went wrong
-    hold(ax2, 'off');
+        angle_J1 = animatedline(ax2, 'Marker', 'o','Color', 'r'); % Zeichnen der aktuellen Position von Gelenk J1
+        angle_J2 = animatedline(ax2, 'Marker', 'o','Color', 'b'); % Zeichnen der aktuellen Position von Gelenk J2
+        
+        % axis(ax2, [0 max(round(te_gesamt))...
+        %           floor(rad2deg(min(winkel(:)))/10)*10-20 ...
+        %           ceil(rad2deg(max(winkel(:)))/10)*10]+20);  % something went wrong
+        hold(ax2, 'off');
+    end
 
 
     % Erstellung des Geschwindigkeitsverlaufs
     cla(ax3)    % Plot loeschen, falls noch aus vorherigen durchläufen vorhanden
-    hold(ax3, 'on');
-    fplot(ax3, glg_v_p1(2, 1), [0, max(te_gesamt)], 'g-'); % Strecke Pstart-P1
-    p_v1 = animatedline(ax3, 'Marker', 'o','Color', 'g');  % Aktuelle Geschwindigkeit
+    if app.GeschwVerlaufCheckBox.Value
+        hold(ax3, 'on');
+        fplot(ax3, glg_v_p1(2, 1), [0, max(te_gesamt)], 'g-'); % Strecke Pstart-P1
+        p_v1 = animatedline(ax3, 'Marker', 'o','Color', 'g');  % Aktuelle Geschwindigkeit
+        
+        xv2 = subs(glg_v_p2(1, 1), t, zeit)
+        fplot(ax3, glg_v_p2(1, 1), [0, max(te_gesamt)], 'r-'); % Strecke P1-P2
+        p_v2 = animatedline(ax3, 'Marker', 'o','Color', 'r');  % Aktuelle Geschwindigkeit
+        
+        fplot(ax3, -glg_v_p3(2, 1), [0, max(te_gesamt)], 'b-'); % Strecke P2-P3
+        p_v3 = animatedline(ax3, 'Marker', 'o','Color', 'b');   % Aktuelle Geschwindigkeit
+        
+        fplot(ax3, -glg_v_p4(1, 1), [0, max(te_gesamt)], 'k-'); % Strecke P3-P4
+        p_v4 = animatedline(ax3, 'Marker', 'o','Color', 'k');   % Aktuelle Geschwindigkeit
+        
+        fplot(ax3, glg_v_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
+        p_v5 = animatedline(ax3, 'Marker', 'o','Color', 'c');  % Aktuelle Geschwindigkeit
     
-    fplot(ax3, glg_v_p2(1, 1), [0, max(te_gesamt)], 'r-'); % Strecke P1-P2
-    p_v2 = animatedline(ax3, 'Marker', 'o','Color', 'r');  % Aktuelle Geschwindigkeit
-    
-    fplot(ax3, -glg_v_p3(2, 1), [0, max(te_gesamt)], 'b-'); % Strecke P2-P3
-    p_v3 = animatedline(ax3, 'Marker', 'o','Color', 'b');   % Aktuelle Geschwindigkeit
-    
-    fplot(ax3, -glg_v_p4(1, 1), [0, max(te_gesamt)], 'k-'); % Strecke P3-P4
-    p_v4 = animatedline(ax3, 'Marker', 'o','Color', 'k');   % Aktuelle Geschwindigkeit
-    
-    fplot(ax3, glg_v_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
-    p_v5 = animatedline(ax3, 'Marker', 'o','Color', 'c');  % Aktuelle Geschwindigkeit
-
-    axis(ax3, [0 max(te_gesamt) -4 4]);
-    hold(ax3, 'off');
+        axis(ax3, [0 max(te_gesamt) -4 4]);
+        hold(ax3, 'off');
+    end
 
 
     % Erstellung des Beschleunigungsverlaufs
     cla(ax4)    % Plot loeschen, falls noch aus vorherigen durchläufen vorhanden
-    hold(ax4, 'on');
-    fplot(ax4, glg_a_p1(2, 1), [0, max(te_gesamt)], 'g-'); % Strecke Pstart-P1
-    p_a1 = animatedline(ax4, 'Marker', 'o','Color', 'g');  % Aktuelle Beschleunigung
+    if app.BeschlVerlaufCheckBox.Value
+        hold(ax4, 'on');
+        fplot(ax4, glg_a_p1(2, 1), [0, max(te_gesamt)], 'g-'); % Strecke Pstart-P1
+        p_a1 = animatedline(ax4, 'Marker', 'o','Color', 'g');  % Aktuelle Beschleunigung
+        
+        fplot(ax4, glg_a_p2(1, 1), [0, max(te_gesamt)], 'r-'); % Strecke P1-P2
+        p_a2 = animatedline(ax4, 'Marker', 'o','Color', 'r');  % Aktuelle Beschleunigung
+        
+        fplot(ax4, -glg_a_p3(2, 1), [0, max(te_gesamt)], 'b-'); % Strecke P2-P3
+        p_a3 = animatedline(ax4, 'Marker', 'o','Color', 'b');   % Aktuelle Beschleunigung
+        
+        fplot(ax4, -glg_a_p4(1, 1), [0, max(te_gesamt)], 'k-'); % Strecke P3-P4
+        p_a4 = animatedline(ax4, 'Marker', 'o','Color', 'k');   % Aktuelle Beschleunigung
+        
+        fplot(ax4, glg_a_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
+        p_a5 = animatedline(ax4, 'Marker', 'o','Color', 'c');  % Aktuelle Beschleunigung
     
-    fplot(ax4, glg_a_p2(1, 1), [0, max(te_gesamt)], 'r-'); % Strecke P1-P2
-    p_a2 = animatedline(ax4, 'Marker', 'o','Color', 'r');  % Aktuelle Beschleunigung
-    
-    fplot(ax4, -glg_a_p3(2, 1), [0, max(te_gesamt)], 'b-'); % Strecke P2-P3
-    p_a3 = animatedline(ax4, 'Marker', 'o','Color', 'b');   % Aktuelle Beschleunigung
-    
-    fplot(ax4, -glg_a_p4(1, 1), [0, max(te_gesamt)], 'k-'); % Strecke P3-P4
-    p_a4 = animatedline(ax4, 'Marker', 'o','Color', 'k');   % Aktuelle Beschleunigung
-    
-    fplot(ax4, glg_a_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
-    p_a5 = animatedline(ax4, 'Marker', 'o','Color', 'c');  % Aktuelle Beschleunigung
-
-    axis(ax4, [0 max(te_gesamt) -1.5 1.5]);
-    hold(ax4, 'off');
+        axis(ax4, [0 max(te_gesamt) -1.5 1.5]);
+        hold(ax4, 'off');
+    end
 
 
     tic
@@ -195,54 +220,62 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
     steps = size(p_gesamt, 1);
     for i = 1:steps
 
-        % Aktualiesierung der Roboterarme
-        clearpoints(rr_robot);  % löscht die Zeichnung der SChleife 1-1
-        addpoints(rr_robot, [0, p_J1(i, 1)], [0, p_J1(i, 2)]);                      % Armteil 1
-        addpoints(rr_robot, [p_J1(i, 1), p_J2(i, 1)], [p_J1(i, 2), p_J2(i, 2)]);    % Armteil 2
-        
-        % Aktualisierung des Geschwindigkeits- und Beschleunigungsvektor
-        set(q1, 'xdata', p_gesamt(i, 1), 'ydata', p_gesamt(i, 2), 'udata', v_gesamt(i, 1), 'vdata', v_gesamt(i, 2))
-        set(q2, 'xdata', p_gesamt(i, 1), 'ydata', p_gesamt(i, 2), 'udata', a_gesamt(i, 1), 'vdata', a_gesamt(i, 2))
+        if app.BewegungssimulationCheckBox.Value
+            % Aktualiesierung der Roboterarme
+            clearpoints(rr_robot);  % löscht die Zeichnung der SChleife 1-1
+            addpoints(rr_robot, [0, p_J1(i, 1)], [0, p_J1(i, 2)]);                      % Armteil 1
+            addpoints(rr_robot, [p_J1(i, 1), p_J2(i, 1)], [p_J1(i, 2), p_J2(i, 2)]);    % Armteil 2
+            
+            % Aktualisierung des Geschwindigkeits- und Beschleunigungsvektor
+            set(q1, 'xdata', p_gesamt(i, 1), 'ydata', p_gesamt(i, 2), 'udata', v_gesamt(i, 1), 'vdata', v_gesamt(i, 2))
+            set(q2, 'xdata', p_gesamt(i, 1), 'ydata', p_gesamt(i, 2), 'udata', a_gesamt(i, 1), 'vdata', a_gesamt(i, 2))
+        end
 
-        % Aktualisierung der aktuellen Gelenkposition J1
-        clearpoints(angle_J1);  % löscht die Zeichnung der SChleife 1-1
-        addpoints(angle_J1, zeit(i), winkel_deg(i, 1));
-        
-        % Aktualisierung der aktuellen Gelenkposition J2
-        clearpoints(angle_J2);  % löscht die Zeichnung der SChleife 1-1
-        addpoints(angle_J2, zeit(i), winkel_deg(i, 2));
+        if app.WinkelVerlaufCheckBox.Value
+            % Aktualisierung der aktuellen Gelenkposition J1
+            clearpoints(angle_J1);  % löscht die Zeichnung der SChleife 1-1
+            addpoints(angle_J1, zeit(i), winkel_deg(i, 1));
+            
+            % Aktualisierung der aktuellen Gelenkposition J2
+            clearpoints(angle_J2);  % löscht die Zeichnung der SChleife 1-1
+            addpoints(angle_J2, zeit(i), winkel_deg(i, 2));
+        end
 
         % Aktualisierung des Geschwindigkeitsverlaufs
-        clearpoints(p_v1);
-        addpoints(p_v1, zeit(i), double(subs(glg_v_p1(2, 1), t, zeit(i))));
-
-        clearpoints(p_v2);
-        addpoints(p_v2, zeit(i), double(subs(glg_v_p2(2, 1), t, zeit(i))));
-
-        clearpoints(p_v3);
-        addpoints(p_v3, zeit(i), double(subs(-glg_v_p3(2, 1), t, zeit(i))));
-
-        clearpoints(p_v4);
-        addpoints(p_v4, zeit(i), double(subs(-glg_v_p4(2, 1), t, zeit(i))));
-
-        clearpoints(p_v5);
-        addpoints(p_v5, zeit(i), double(subs(glg_v_p5(2, 1), t, zeit(i))));
+        if app.GeschwVerlaufCheckBox.Value
+            clearpoints(p_v1);
+            addpoints(p_v1, zeit(i), double(subs(glg_v_p1(2, 1), t, zeit(i))));
+    
+            clearpoints(p_v2);
+            addpoints(p_v2, zeit(i), double(subs(glg_v_p2(1, 1), t, zeit(i))));
+    
+            clearpoints(p_v3);
+            addpoints(p_v3, zeit(i), double(subs(-glg_v_p3(2, 1), t, zeit(i))));
+    
+            clearpoints(p_v4);
+            addpoints(p_v4, zeit(i), double(subs(-glg_v_p4(1, 1), t, zeit(i))));
+    
+            clearpoints(p_v5);
+            addpoints(p_v5, zeit(i), double(subs(glg_v_p5(2, 1), t, zeit(i))));
+        end
 
         % Aktualisierung des Beschleunigungsverlaufs
-        clearpoints(p_a1);
-        addpoints(p_a1, zeit(i), double(subs(glg_a_p1(2, 1), t, zeit(i))));
-
-        clearpoints(p_a2);
-        addpoints(p_a2, zeit(i), double(subs(glg_a_p2(2, 1), t, zeit(i))));
-
-        clearpoints(p_a3);
-        addpoints(p_a3, zeit(i), double(subs(-glg_a_p3(2, 1), t, zeit(i))));
-
-        clearpoints(p_a4);
-        addpoints(p_a4, zeit(i), double(subs(-glg_a_p4(2, 1), t, zeit(i))));
-
-        clearpoints(p_a5);
-        addpoints(p_a5, zeit(i), double(subs(glg_a_p5(2, 1), t, zeit(i))));
+        if app.BeschlVerlaufCheckBox.Value
+            clearpoints(p_a1);
+            addpoints(p_a1, zeit(i), double(subs(glg_a_p1(2, 1), t, zeit(i))));
+    
+            clearpoints(p_a2);
+            addpoints(p_a2, zeit(i), double(subs(glg_a_p2(1, 1), t, zeit(i))));
+    
+            clearpoints(p_a3);
+            addpoints(p_a3, zeit(i), double(subs(-glg_a_p3(2, 1), t, zeit(i))));
+    
+            clearpoints(p_a4);
+            addpoints(p_a4, zeit(i), double(subs(-glg_a_p4(1, 1), t, zeit(i))));
+    
+            clearpoints(p_a5);
+            addpoints(p_a5, zeit(i), double(subs(glg_a_p5(2, 1), t, zeit(i))));
+        end
 
         drawnow();
 
