@@ -173,7 +173,6 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         fplot(ax3, glg_v_p1(2, 1), [0, max(te_gesamt)], 'g-'); % Strecke Pstart-P1
         p_v1 = animatedline(ax3, 'Marker', 'o','Color', 'g');  % Aktuelle Geschwindigkeit
         
-        xv2 = subs(glg_v_p2(1, 1), t, zeit)
         fplot(ax3, glg_v_p2(1, 1), [0, max(te_gesamt)], 'r-'); % Strecke P1-P2
         p_v2 = animatedline(ax3, 'Marker', 'o','Color', 'r');  % Aktuelle Geschwindigkeit
         
