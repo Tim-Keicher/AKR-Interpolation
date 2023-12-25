@@ -1,4 +1,6 @@
 function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erstellen_flag)  
+    app.new_round_flag = 0;
+
     syms t  real % reale Variable t definiert (ohne Wert)
     
     % Anpassbare Parameter
@@ -191,6 +193,7 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
     % Aktualisierung der Dartsellungen
     steps = size(p_gesamt, 1);
     for i = 1:steps
+
         % Aktualiesierung der Roboterarme
         clearpoints(rr_robot);  % löscht die Zeichnung der SChleife 1-1
         addpoints(rr_robot, [0, p_J1(i, 1)], [0, p_J1(i, 2)]);                      % Armteil 1
@@ -243,19 +246,29 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         drawnow();
 
         % Gif erstelln, wenn falg gesetzt ist
-        % if gif_erstellen_flag.Value == 1
-        %     frame = getframe(app.UIFigure);
-        %     im = frame2im(frame);
-        %     [imind, cm] = rgb2ind(im, 256);
-        %     if i == 1
-        %         imwrite(imind, cm, filename, 'gif', 'Loopcount', inf, 'DelayTime', 0.1);
-        %     else
-        %         imwrite(imind, cm, filename, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
-        %     end
-        %     pause(0.01);
-        % end
+        if gif_erstellen_flag.Value == 1
+            frame = getframe(app.UIFigure);
+            im = frame2im(frame);
+            [imind, cm] = rgb2ind(im, 256);
+            if i == 1
+                imwrite(imind, cm, filename, 'gif', 'Loopcount', inf, 'DelayTime', 0.1);
+            else
+                imwrite(imind, cm, filename, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
+            end
+            % pause(0.01);
+        end
+
+                % ...
+        while app.pause_flag == 1
+            pause(0.01)
+            if app.new_round_flag == 1
+                return;
+            end
+        end
     end
     elapsed_time = toc;
+
+    app.new_round_flag = 1;
 
     % Display the elapsed time
     disp(['Elapsed time: ' num2str(elapsed_time) ' seconds'])
