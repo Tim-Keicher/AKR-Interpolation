@@ -169,18 +169,23 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
     cla(ax3)    % Plot loeschen, falls noch aus vorherigen durchläufen vorhanden
     if app.GeschwVerlaufCheckBox.Value
         hold(ax3, 'on');
+        xv1 = double(subs(glg_v_p1(2, 1), t, zeit));
         fplot(ax3, glg_v_p1(2, 1), [0, max(te_gesamt)], 'g-'); % Strecke Pstart-P1
         p_v1 = animatedline(ax3, 'Marker', 'o','Color', 'g');  % Aktuelle Geschwindigkeit
         
+        xv2 = double(subs(glg_v_p2(1, 1), t, zeit));
         fplot(ax3, glg_v_p2(1, 1), [0, max(te_gesamt)], 'r-'); % Strecke P1-P2
         p_v2 = animatedline(ax3, 'Marker', 'o','Color', 'r');  % Aktuelle Geschwindigkeit
         
+        xv3 = double(subs(-glg_v_p3(2, 1), t, zeit));
         fplot(ax3, -glg_v_p3(2, 1), [0, max(te_gesamt)], 'b-'); % Strecke P2-P3
         p_v3 = animatedline(ax3, 'Marker', 'o','Color', 'b');   % Aktuelle Geschwindigkeit
         
+        xv4 = double(subs(-glg_v_p4(1, 1), t, zeit));
         fplot(ax3, -glg_v_p4(1, 1), [0, max(te_gesamt)], 'k-'); % Strecke P3-P4
         p_v4 = animatedline(ax3, 'Marker', 'o','Color', 'k');   % Aktuelle Geschwindigkeit
         
+        xv5 = double(subs(glg_v_p5(2, 1), t, zeit));
         fplot(ax3, glg_v_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
         p_v5 = animatedline(ax3, 'Marker', 'o','Color', 'c');  % Aktuelle Geschwindigkeit
     
@@ -194,18 +199,23 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
     cla(ax4)    % Plot loeschen, falls noch aus vorherigen durchläufen vorhanden
     if app.BeschlVerlaufCheckBox.Value
         hold(ax4, 'on');
+        xa1 = double(subs(glg_a_p1(2, 1), t, zeit));
         fplot(ax4, glg_a_p1(2, 1), [0, max(te_gesamt)], 'g-'); % Strecke Pstart-P1
         p_a1 = animatedline(ax4, 'Marker', 'o','Color', 'g');  % Aktuelle Beschleunigung
         
+        xa2 = double(subs(glg_a_p2(1, 1), t, zeit));
         fplot(ax4, glg_a_p2(1, 1), [0, max(te_gesamt)], 'r-'); % Strecke P1-P2
         p_a2 = animatedline(ax4, 'Marker', 'o','Color', 'r');  % Aktuelle Beschleunigung
         
+        xa3 = double(subs(-glg_a_p3(2, 1), t, zeit));
         fplot(ax4, -glg_a_p3(2, 1), [0, max(te_gesamt)], 'b-'); % Strecke P2-P3
         p_a3 = animatedline(ax4, 'Marker', 'o','Color', 'b');   % Aktuelle Beschleunigung
         
+        xa4 = double(subs(-glg_a_p4(1, 1), t, zeit));
         fplot(ax4, -glg_a_p4(1, 1), [0, max(te_gesamt)], 'k-'); % Strecke P3-P4
         p_a4 = animatedline(ax4, 'Marker', 'o','Color', 'k');   % Aktuelle Beschleunigung
         
+        xa5 = double(subs(glg_a_p5(2, 1), t, zeit));
         fplot(ax4, glg_a_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
         p_a5 = animatedline(ax4, 'Marker', 'o','Color', 'c');  % Aktuelle Beschleunigung
     
@@ -215,7 +225,6 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
     end
 
 
-    tic
     % Aktualisierung der Dartsellungen
     steps = size(p_gesamt, 1);
     for i = 1:steps
@@ -244,37 +253,37 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         % Aktualisierung des Geschwindigkeitsverlaufs
         if app.GeschwVerlaufCheckBox.Value
             clearpoints(p_v1);
-            addpoints(p_v1, zeit(i), double(subs(glg_v_p1(2, 1), t, zeit(i))));
+            addpoints(p_v1, zeit(i), xv1(i));
     
             clearpoints(p_v2);
-            addpoints(p_v2, zeit(i), double(subs(glg_v_p2(1, 1), t, zeit(i))));
+            addpoints(p_v2, zeit(i), xv2(i));
     
             clearpoints(p_v3);
-            addpoints(p_v3, zeit(i), double(subs(-glg_v_p3(2, 1), t, zeit(i))));
+            addpoints(p_v3, zeit(i), xv3(i));
     
             clearpoints(p_v4);
-            addpoints(p_v4, zeit(i), double(subs(-glg_v_p4(1, 1), t, zeit(i))));
+            addpoints(p_v4, zeit(i), xv4(i));
     
             clearpoints(p_v5);
-            addpoints(p_v5, zeit(i), double(subs(glg_v_p5(2, 1), t, zeit(i))));
+            addpoints(p_v5, zeit(i), xv5(i));
         end
 
         % Aktualisierung des Beschleunigungsverlaufs
         if app.BeschlVerlaufCheckBox.Value
             clearpoints(p_a1);
-            addpoints(p_a1, zeit(i), double(subs(glg_a_p1(2, 1), t, zeit(i))));
+            addpoints(p_a1, zeit(i), xa1(i));
     
             clearpoints(p_a2);
-            addpoints(p_a2, zeit(i), double(subs(glg_a_p2(1, 1), t, zeit(i))));
+            addpoints(p_a2, zeit(i), xa2(i));
     
             clearpoints(p_a3);
-            addpoints(p_a3, zeit(i), double(subs(-glg_a_p3(2, 1), t, zeit(i))));
+            addpoints(p_a3, zeit(i), xa3(i));
     
             clearpoints(p_a4);
-            addpoints(p_a4, zeit(i), double(subs(-glg_a_p4(1, 1), t, zeit(i))));
+            addpoints(p_a4, zeit(i), xa4(i));
     
             clearpoints(p_a5);
-            addpoints(p_a5, zeit(i), double(subs(glg_a_p5(2, 1), t, zeit(i))));
+            addpoints(p_a5, zeit(i), xa5(i));
         end
 
         drawnow();
@@ -300,14 +309,7 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
             end
         end
     end
-    elapsed_time = toc;
 
     % Flag um angehaltene Interrupts zu beenden wird gesetzt 
     app.canle_old_runs_flag = 1;
-
-    % Display the elapsed time
-    disp(['Elapsed time: ' num2str(elapsed_time) ' seconds'])
-    
-    
-    disp('finished')
 end
