@@ -1,10 +1,5 @@
 function designAxes(app)
-    % Setzen der Sichtbarkeit für alle Axes
-    app.robotSimUIAxes.Visible = app.BewegungssimulationCheckBox.Value;
-    app.angleUIAxes.Visible = app.WinkelVerlaufCheckBox.Value;
-    app.velUIAxes.Visible = app.GeschwVerlaufCheckBox.Value;
-    app.accUIAxes.Visible = app.BeschlVerlaufCheckBox.Value;
-    
+   
     % Ausrichtung der Axes ihrer Sichtbarkeit nach:
     % die erste Sichtbare Axes wird oben links gesetzt,
     % die zweite oben rechts
@@ -68,4 +63,10 @@ function designAxes(app)
         otherwise
             warning("Visible Axes: case not available!");
     end
+
+    % Setzen der Sichtbarkeit für alle Axes
+    app.robotSimUIAxes.Visible = app.BewegungssimulationCheckBox.Value;
+    app.angleUIAxes.Visible = app.WinkelVerlaufCheckBox.Value;
+    app.velUIAxes.Visible = app.GeschwVerlaufCheckBox.Value;
+    app.accUIAxes.Visible = app.BeschlVerlaufCheckBox.Value;
 end

@@ -138,11 +138,11 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         q2 = quiver(ax1, p_gesamt(1, 1), p_gesamt(1, 2), a_gesamt(1, 1), a_gesamt(1, 2), 'linewidth', 2, 'color', 'r');  % Bescghleunigungsvektor erstellen
         set(q2, 'AutoScale', 'on', 'AutoScaleFactor', 25, 'MaxHeadSize', 5);
         
-        % if konfig == 0
-        %     legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southwest')
-        % else
-        %     legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southeast')
-        % end
+        if konfig == 0
+            legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southwest')
+        else
+            legend(ax1, 'RR-Roboter', 'Verfahrweg Rahmenprofil TCP', 'Geschwindigkeitsvektor', 'Beschleunigungsvektor', 'Location', 'southeast')
+        end
         axis(ax1, [-100 100 -30 70]);
         hold(ax1, 'off');
     end
@@ -159,9 +159,8 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         angle_J1 = animatedline(ax2, 'Marker', 'o','Color', 'r'); % Zeichnen der aktuellen Position von Gelenk J1
         angle_J2 = animatedline(ax2, 'Marker', 'o','Color', 'b'); % Zeichnen der aktuellen Position von Gelenk J2
         
-        % axis(ax2, [0 max(round(te_gesamt))...
-        %           floor(rad2deg(min(winkel(:)))/10)*10-20 ...
-        %           ceil(rad2deg(max(winkel(:)))/10)*10]+20);  % something went wrong
+        legend(ax2, 'Gelenk J1', 'Gelenk J2', 'Location', 'southwest')
+        % axis(ax2, [0 max(te_gesamt) floor(min(winkel_deg(:))/10)*10-20 ceil(max(winkel_deg(:))/10)*10]+20);  % something went wrong
         hold(ax2, 'off');
     end
 
@@ -185,6 +184,7 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         fplot(ax3, glg_v_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
         p_v5 = animatedline(ax3, 'Marker', 'o','Color', 'c');  % Aktuelle Geschwindigkeit
     
+        legend(ax3, 'Strecke Pstart-P1', '', 'Strecke P1-P2', '', 'Strecke P2-P3', '', 'Strecke P3-P4', '', 'Strecke P4-PStart', '', 'Location', 'southwest')
         axis(ax3, [0 max(te_gesamt) -4 4]);
         hold(ax3, 'off');
     end
@@ -209,6 +209,7 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         fplot(ax4, glg_a_p5(2, 1), [0, max(te_gesamt)], 'c-'); % Strecke P4-P5
         p_a5 = animatedline(ax4, 'Marker', 'o','Color', 'c');  % Aktuelle Beschleunigung
     
+        legend(ax4, 'Strecke Pstart-P1', '', 'Strecke P1-P2', '', 'Strecke P2-P3', '', 'Strecke P3-P4', '', 'Strecke P4-PStart', '', 'Location', 'southwest')
         axis(ax4, [0 max(te_gesamt) -1.5 1.5]);
         hold(ax4, 'off');
     end
