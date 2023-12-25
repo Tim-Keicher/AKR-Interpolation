@@ -1,5 +1,6 @@
 function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erstellen_flag)  
-    app.new_round_flag = 0;
+    % Flag um angehaltene Interrupts zu beenden wird zurueckgesetzt
+    app.canle_old_runs_flag = 0;
 
     syms t  real % reale Variable t definiert (ohne Wert)
     
@@ -261,14 +262,15 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
                 % ...
         while app.pause_flag == 1
             pause(0.01)
-            if app.new_round_flag == 1
+            if app.canle_old_runs_flag == 1
                 return;
             end
         end
     end
     elapsed_time = toc;
 
-    app.new_round_flag = 1;
+    % Flag um angehaltene Interrupts zu beenden wird gesetzt 
+    app.canle_old_runs_flag = 1;
 
     % Display the elapsed time
     disp(['Elapsed time: ' num2str(elapsed_time) ' seconds'])
