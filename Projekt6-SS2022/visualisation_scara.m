@@ -34,7 +34,9 @@ while trueb < 5
 
         show(robot,q(:,i),FastUpdate=true,PreservePlot=false);
         waitfor(rc);
+        jointSpaceMarker = plot3(poseNow(1,4),poseNow(2,4),poseNow(3,4),'r.','MarkerSize',20);
     end
+     
     trueb = trueb +1
 end
 
