@@ -2,6 +2,8 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
     % Flag um angehaltene Interrupts zu beenden wird zurueckgesetzt
     app.canle_old_runs_flag = 0;
 
+    gif_neu_erstellen = 0;  % falg zum erstmaligen Erstellen des Gifs
+
     syms t  real % reale Variable t definiert (ohne Wert)
     
     % Anpassbare Parameter
@@ -290,10 +292,12 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
 
         % Gif erstelln, wenn falg gesetzt ist
         if gif_erstellen_flag.Value == 1
+            
             frame = getframe(app.UIFigure);
             im = frame2im(frame);
             [imind, cm] = rgb2ind(im, 256);
-            if i == 1
+            if gif_neu_erstellen == 0
+                gif_neu_erstellen = 1; % soll nur beim ersten Mal ausgefuert werden
                 imwrite(imind, cm, filename, 'gif', 'Loopcount', inf, 'DelayTime', 0.1);
             else
                 imwrite(imind, cm, filename, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
