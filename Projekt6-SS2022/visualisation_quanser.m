@@ -1,4 +1,4 @@
-function [] = visualisation_quanser(winkel)
+function [] = visualisation_quanser(winkel, record)
 
 winkelJ1 = winkel(:,1);
 winkelJ2 = winkel(:,2);
@@ -17,7 +17,7 @@ robot = loadrobot('quanserQArm',DataFormat='column'); %quanserQArm
 gen_waypoints = zeros(4, size(winkelJ1, 1)-1);
 
 for i = 1:size(winkelJ1, 1)
-    gen_waypoints(:, i) = [pi/4; winkelJ1(i, 1)-pi/2; winkelJ2(i, 1)-pi/2;  0];
+    gen_waypoints(:, i) = [0; winkelJ1(i, 1)-pi/2; winkelJ2(i, 1)-pi/2;  0];
 
 end
 frankaWaypoints = gen_waypoints;
@@ -28,15 +28,31 @@ figure
 set(gcf,'Visible','on');
 rc = rateControl(sampleRate);
 trueb = 0
-while trueb < 5
 
+if record == true
+    filename = sprintf('Animations/%s-animation.gif', datestr(now,'yyyy-mm-dd-HHMMSS'));
+    f = figure('Name', 'Animation','Visible','on','Position',[0 0 1440 810]); % Figur erstellen
     for i = 1:numSamples
+        show(robot,q(:,i),FastUpdate=true, PreservePlot = false,Frames="off",Collisions="off");
+        waitfor(rc);
 
-        show(robot,q(:,i),FastUpdate=true,PreservePlot=false);
+        frame = getframe(f);
+        im = frame2im(frame);
+        [imind, cm] = rgb2ind(im, 256);
+        if i == 1
+            imwrite(imind, cm, filename, 'gif', 'Loopcount', inf, 'DelayTime', 0.1);
+        else
+            imwrite(imind, cm, filename, 'gif', 'WriteMode', 'append', 'DelayTime', 0.1);
+        end
+        %pause(0.01);
+    end
+else
+    for i = 1:numSamples
+        show(robot,q(:,i),FastUpdate=true, PreservePlot = false,Frames="off",Collisions="off");
         waitfor(rc);
     end
-    trueb = trueb +1
 end
+
 
 
 end
