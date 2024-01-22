@@ -63,5 +63,8 @@ function [ta, tv, te, err] = calc_t_ramp_target_time(t_target, s_e, v_max, a_max
     % Rückgabewerte
     te = t_e(1,:);
     ta = v1 ./ a_max(1);
-    tv = v2 ./ a_max(1);
+    tv = t_e - t_a;
+
+    % Alternativ
+    % tv = v2 ./ a_max(1);
 end
