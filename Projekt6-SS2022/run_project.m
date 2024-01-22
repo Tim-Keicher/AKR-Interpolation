@@ -162,6 +162,7 @@ function run_project(app, ax1, ax2, ax3, ax4, konfig, vm, am ,t_target, gif_erst
         angle_J2 = animatedline(ax2, 'Marker', 'o','Color', 'b'); % Zeichnen der aktuellen Position von Gelenk J2
         
         legend(ax2, 'Gelenk J1', 'Gelenk J2', 'Location', 'southwest')
+        xlim(ax2, [0 max(te_gesamt)])
         % axis(ax2, [0 max(te_gesamt) floor(min(winkel_deg(:))/10)*10-20 ceil(max(winkel_deg(:))/10)*10]+20);  % something went wrong
         hold(ax2, 'off');
     end
